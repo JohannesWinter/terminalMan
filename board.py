@@ -4,7 +4,7 @@ import string
 import threading
 
 class board:
-    def __init__(self, size : int, startingPos : vector3, EMPTYFIELD : str, CHARACTERSYMBOL : str, WALL : str, BULLET : str, FPS : int):
+    def __init__(self, size : int, startingPos : vector3, EMPTYFIELD : str, CS_UP : str, CS_DOWN : str , CS_RIGHT : str, CS_LEFT : str,WALL : str, BULLET : str, FPS : int):
         board = ["."]*size
         walls = ["."]*size
         for i in range(size):
@@ -13,7 +13,10 @@ class board:
         self.walls = walls
         self.field = board
         self.EMPTYFIELD = EMPTYFIELD
-        self.CHARACTERSYMBOL = CHARACTERSYMBOL
+        self.CS_UP = CS_UP
+        self.CS_DOWN = CS_DOWN
+        self.CS_RIGHT = CS_RIGHT
+        self.CS_LEFT = CS_LEFT
         self.WALL = WALL
         self.BULLET = BULLET
         self.characterPos = startingPos
@@ -49,9 +52,9 @@ class board:
         for s in self.shots:
             board[s.position.x][s.position.y] = self.BULLET
 
-        board[self.characterPos.x][self.characterPos.y] = self.CHARACTERSYMBOL
+        board[self.characterPos.x][self.characterPos.y] = self.getCharacterSymbol()
         self.field = board
-        if self.frameCounter % round(self.FPS/ 2) == 0:
+        if self.frameCounter % round(self.FPS/ 10) == 0:
             self.moveShots()
 
     def addWall(self, pos : vector3):
@@ -116,4 +119,15 @@ class board:
             
             s.position = newPos
             s.direction = newFacing
+
+    def getCharacterSymbol(self):
+        if self.facing == "up":
+            return self.CS_UP
+        if self.facing == "down":
+            return self.CS_DOWN
+        if self.facing == "right":
+            return self.CS_RIGHT
+        if self.facing == "left":
+            return self.CS_LEFT
+        return "o "
 

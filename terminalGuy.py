@@ -9,7 +9,10 @@ from pynput import keyboard
 import threading
 
 MAXFPS = 30
-CHARACTERSYMBOL = "o "
+CS_UP = "o "
+CS_DOWN = "o "
+CS_RIGHT = "o "
+CS_LEFT = "o "
 EMPTYFIELD = "  "
 WALL = "x "
 BULLET = "* "
@@ -20,7 +23,10 @@ game = board(
     size=sizeInt, 
     startingPos=characterPos, 
     EMPTYFIELD=EMPTYFIELD, 
-    CHARACTERSYMBOL=CHARACTERSYMBOL, 
+    CS_UP=CS_UP,
+    CS_DOWN=CS_DOWN,
+    CS_RIGHT=CS_RIGHT,
+    CS_LEFT=CS_LEFT, 
     WALL=WALL,
     FPS=MAXFPS,
     BULLET=BULLET)
