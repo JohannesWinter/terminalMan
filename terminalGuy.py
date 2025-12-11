@@ -20,7 +20,8 @@ game = board(
     startingPos=characterPos, 
     EMPTYFIELD=EMPTYFIELD, 
     CHARACTERSYMBOL=CHARACTERSYMBOL, 
-    WALL=WALL)
+    WALL=WALL,
+    FPS=MAXFPS)
 game.addWall(vector3(5,5,0))
 
 def onKeyboard(key):

@@ -1,10 +1,10 @@
 from vector3 import vector3
+from shot import shot
 import string
 import threading
-import shot
 
 class board:
-    def __init__(self, size : int, startingPos : vector3, EMPTYFIELD : str, CHARACTERSYMBOL : str, WALL : str):
+    def __init__(self, size : int, startingPos : vector3, EMPTYFIELD : str, CHARACTERSYMBOL : str, WALL : str, FPS : int):
         board = ["."]*size
         walls = ["."]*size
         for i in range(size):
@@ -17,6 +17,10 @@ class board:
         self.WALL = WALL
         self.characterPos = startingPos
         self.size = size
+        self.shots = []
+        self.facing = "up"
+        self.frameCounter = 0
+        self.FPS = FPS
 
     def printBoard(self):
         self.updateBoard()
@@ -31,6 +35,7 @@ class board:
         print("  " + "––" * self.size)
 
     def updateBoard(self):
+        self.frameCounter += 1
         board = ["."]*self.size
         for i in range(self.size):
             board[i] = [self.EMPTYFIELD]*self.size
@@ -42,20 +47,27 @@ class board:
 
         board[self.characterPos.x][self.characterPos.y] = self.CHARACTERSYMBOL
         self.field = board
+        if self.frameCounter % round(self.FPS) / 2 == 0:
+            self.moveShots()
 
     def addWall(self, pos : vector3):
         self.walls[pos.x][pos.y] = self.WALL
 
     def executeMovement(self, command : string): 
         newPos = self.characterPos.copy()
+        newFacing = ""
         if command == "up":
             newPos.add(vector3(1,0,0))
+            newFacing = "up"
         if command == "down":
             newPos.add(vector3(-1,0,0))
+            newFacing = "down"
         if command == "right":
             newPos.add(vector3(0,1,0))
+            newFacing = "right"
         if command == "left":
             newPos.add(vector3(0,-1,0))
+            newFacing = "left"
 
         if (newPos.x < 0 or newPos.y < 0 or
             newPos.x >= self.size or newPos.y >= self.size):
@@ -65,6 +77,38 @@ class board:
             return
         
         self.characterPos = newPos
+        self.facing = newFacing
 
     def executeShot(self):
+        newShot = shot("bullet", self.facing, 1, self.characterPos)
+        self.shots.append(newShot)
         return
+    
+    def moveShots(self):
+        for s in self.shots:
+            newPos = self.characterPos.copy()
+            newFacing = ""
+            if s.direction == "up":
+                newPos.add(vector3(1,0,0))
+                newFacing = "up"
+            if s.direction == "down":
+                newPos.add(vector3(-1,0,0))
+                newFacing = "down"
+            if s.direction == "right":
+                newPos.add(vector3(0,1,0))
+                newFacing = "right"
+            if s.direction == "left":
+                newPos.add(vector3(0,-1,0))
+                newFacing = "left"
+            
+            if (newPos.x < 0 or newPos.y < 0 or
+                newPos.x >= self.size or newPos.y >= self.size):
+                self.shots.remove(s)
+                continue
+
+            if self.walls[newPos.x][newPos.y] == self.WALL:
+                self.shots.remove(s)
+                return
+            
+            s.position = newPos
+
