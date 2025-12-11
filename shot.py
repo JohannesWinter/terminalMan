@@ -1,3 +1,5 @@
+from vector import vector3
+
 class shot:
     def __init__(self, shotType : str, direction : str, damage : float, position):
         self.shotType = shotType

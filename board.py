@@ -1,7 +1,8 @@
-from vector3 import vector3
+from vector import vector3
 from shot import shot
 import string
 import threading
+import math
 
 class board:
     def __init__(self, size : int, startingPos : vector3, EMPTYFIELD : str, CS_UP : str, CS_DOWN : str , CS_RIGHT : str, CS_LEFT : str,WALL : str, BULLET : str, FPS : int):
@@ -25,6 +26,7 @@ class board:
         self.facing = "up"
         self.frameCounter = 0
         self.FPS = FPS
+        self.lastFacing = "up"
 
     def printBoard(self):
         self.updateBoard()
@@ -54,23 +56,26 @@ class board:
 
         board[self.characterPos.x][self.characterPos.y] = self.getCharacterSymbol()
         self.field = board
-        if self.frameCounter % round(self.FPS/ 10) == 0:
+        if self.frameCounter % math.ceil(self.FPS/ 10) == 0:
             self.moveShots()
 
     def addWall(self, pos : vector3):
         self.walls[pos.x][pos.y] = self.WALL
 
-    def executeMovement(self, command : string): 
+    def executeRotation(self, command : string): 
         newPos = self.characterPos.copy()
         newFacing = self.facing
         if command == "up":
-            newPos.add(vector3(1,0,0))
+            newFacing = "up"
         if command == "down":
-            newPos.add(vector3(-1,0,0))
+            newFacing = "down"
         if command == "right":
-            newFacing = self.rotateFacing(self.facing, "right")
+            newFacing = "right"
         if command == "left":
-            newFacing = self.rotateFacing(self.facing, "left")
+            newFacing = "left"
+
+        if self.lastFacing == self.rotateFacing(self.rotateFacing(newFacing, "right"), "right"):
+            return
 
         if (newPos.x < 0 or newPos.y < 0 or
             newPos.x >= self.size or newPos.y >= self.size):
@@ -92,16 +97,16 @@ class board:
             newPos = s.position.copy()
             newFacing = ""
             if s.direction == "up":
-                newPos.add(vector3(1,0,0))
+                newPos = newPos + vector3(1,0,0)
                 newFacing = "up"
             if s.direction == "down":
-                newPos.add(vector3(-1,0,0))
+                newPos = newPos + vector3(-1,0,0)
                 newFacing = "down"
             if s.direction == "right":
-                newPos.add(vector3(0,1,0))
+                newPos = newPos + vector3(0,1,0)
                 newFacing = "right"
             if s.direction == "left":
-                newPos.add(vector3(0,-1,0))
+                newPos = newPos + vector3(0,-1,0)
                 newFacing = "left"
             
             if (newPos.x < 0 or newPos.y < 0 or
@@ -150,3 +155,13 @@ class board:
                 return "down"
             if direction == "right":
                 return "up"
+            
+    def forwardVector(self, facing: str):
+        if facing == "up":
+            return vector3(1,0,0)
+        if facing == "down":
+            return vector3(-1,0,0)
+        if facing == "right":
+            return vector3(0,1,0)
+        if facing == "left":
+            return vector3(0,-1,0)

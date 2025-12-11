@@ -11,16 +11,14 @@ class vector3:
             return True
         return False
     
-    def add(self, vector):
-        self.x += vector.x
-        self.y += vector.y
-        self.z += vector.z
+    def __add__(self, other):
+        return vector3(self.x + other.x, self.y + other.y, self.z + other.z)
 
-    def sub(self, vector):
-        self.x -= vector.x
-        self.y -= vector.y
-        self.z -= vector.z
+    def __sub__(self, other):
+        return vector3(self.x - other.x, self.y - other.y, self.z - other.z)
 
+    def __mul__(self, value):
+        return vector3(self.x * value, self.y * value, self.z * value)
     def copy(self):
         return vector3(self.x, self.y, self.z)
 

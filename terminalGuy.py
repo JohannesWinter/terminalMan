@@ -1,12 +1,12 @@
 
 import sys
 import string
-from vector3 import vector3
+from vector import vector3
 from board import board
 import time
 import sys
 from pynput import keyboard
-import threading
+from vector import vector3
 
 MAXFPS = 30
 CS_UP = "ʌ "
@@ -34,13 +34,13 @@ game.addWall(vector3(5,5,0))
 
 def onKeyboard(key):
     if (key == keyboard.Key.up):
-        game.executeMovement("up")
+        game.executeRotation("up")
     if (key == keyboard.Key.down):
-        game.executeMovement("down")
+        game.executeRotation("down")
     if (key == keyboard.Key.right):
-        game.executeMovement("right")
+        game.executeRotation("right")
     if (key == keyboard.Key.left):
-        game.executeMovement("left")
+        game.executeRotation("left")
     if (key == keyboard.Key.space):
         game.executeShot()
 
