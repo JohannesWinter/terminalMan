@@ -12,6 +12,7 @@ MAXFPS = 30
 CHARACTERSYMBOL = "o "
 EMPTYFIELD = "  "
 WALL = "x "
+BULLET = "* "
 
 sizeInt = 10
 characterPos = vector3(0, 0, 0)
@@ -21,7 +22,8 @@ game = board(
     EMPTYFIELD=EMPTYFIELD, 
     CHARACTERSYMBOL=CHARACTERSYMBOL, 
     WALL=WALL,
-    FPS=MAXFPS)
+    FPS=MAXFPS,
+    BULLET=BULLET)
 game.addWall(vector3(5,5,0))
 
 def onKeyboard(key):

@@ -4,7 +4,7 @@ import string
 import threading
 
 class board:
-    def __init__(self, size : int, startingPos : vector3, EMPTYFIELD : str, CHARACTERSYMBOL : str, WALL : str, FPS : int):
+    def __init__(self, size : int, startingPos : vector3, EMPTYFIELD : str, CHARACTERSYMBOL : str, WALL : str, BULLET : str, FPS : int):
         board = ["."]*size
         walls = ["."]*size
         for i in range(size):
@@ -15,6 +15,7 @@ class board:
         self.EMPTYFIELD = EMPTYFIELD
         self.CHARACTERSYMBOL = CHARACTERSYMBOL
         self.WALL = WALL
+        self.BULLET = BULLET
         self.characterPos = startingPos
         self.size = size
         self.shots = []
@@ -43,7 +44,10 @@ class board:
         for x in range(len(board)):
             for y in range(len(board[x])):
                 if self.walls[x][y] == self.WALL:
-                    board[x][y] = self.WALL 
+                    board[x][y] = self.WALL
+
+        for s in self.shots:
+            board[s.position.x][s.position.y] = self.BULLET
 
         board[self.characterPos.x][self.characterPos.y] = self.CHARACTERSYMBOL
         self.field = board
@@ -86,7 +90,7 @@ class board:
     
     def moveShots(self):
         for s in self.shots:
-            newPos = self.characterPos.copy()
+            newPos = s.position.copy()
             newFacing = ""
             if s.direction == "up":
                 newPos.add(vector3(1,0,0))
