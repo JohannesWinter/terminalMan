@@ -1,6 +1,7 @@
 from vector3 import vector3
 import string
 import threading
+import shot
 
 class board:
     def __init__(self, size : int, startingPos : vector3, EMPTYFIELD : str, CHARACTERSYMBOL : str, WALL : str):

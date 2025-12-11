@@ -25,20 +25,21 @@ game.addWall(vector3(5,5,0))
 
 def onKeyboard(key):
     if (key == keyboard.Key.up):
-        game.executeCmd("up")
+        game.executeMovement("up")
     if (key == keyboard.Key.down):
-        game.executeCmd("down")
+        game.executeMovement("down")
     if (key == keyboard.Key.right):
-        game.executeCmd("right")
+        game.executeMovement("right")
     if (key == keyboard.Key.left):
-        game.executeCmd("left")
+        game.executeMovement("left")
+    if (key == keyboard.Key.space):
+        game.executeShot()
 
 listener = keyboard.Listener(on_press=onKeyboard)
 listener.start()
 
 while True:
     game.printBoard()
-    print(game.characterPos)
     time.sleep(1 / MAXFPS)
     #cmd = ""
 
