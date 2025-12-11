@@ -29,13 +29,16 @@ class board:
         for i in range(self.size):
             board[i] = [self.EMPTYFIELD]*self.size
 
-        for x in range(self.size):
-            for y in range(self[x].size):
+        for x in range(len(board)):
+            for y in range(len(board[x])):
                 if self.walls[x][y] == self.WALL:
                     board[x][y] = self.WALL 
         
         board[self.characterPos.x][self.characterPos.y] = self.CHARACTERSYMBOL
         self.field = board
+
+    def addWall(self, pos : vector3):
+        self.walls[pos.x][pos.y] = self.WALL
 
     def executeCmd(self, command : string): 
         oldPos = self.characterPos.copy()
