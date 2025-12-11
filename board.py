@@ -3,9 +3,10 @@ from shot import shot
 import string
 import threading
 import math
+import random
 
 class board:
-    def __init__(self, size : int, startingPos : vector3, EMPTYFIELD : str, CS_UP : str, CS_DOWN : str , CS_RIGHT : str, CS_LEFT : str,WALL : str, BULLET : str, FPS : int):
+    def __init__(self, size : int, startingPos : vector3, maxAmmo : int, MAXDROPPEDAMMO, EMPTYFIELD : str, CS_UP : str, CS_DOWN : str , CS_RIGHT : str, CS_LEFT : str,WALL : str, BULLET : str, AMMO : str, FPS : int):
         board = ["."]*size
         walls = ["."]*size
         for i in range(size):
@@ -20,6 +21,8 @@ class board:
         self.CS_LEFT = CS_LEFT
         self.WALL = WALL
         self.BULLET = BULLET
+        self.AMMO = AMMO
+        self.MAXDROPPEDAMMO = MAXDROPPEDAMMO
         self.characterPos = startingPos
         self.size = size
         self.shots = []
@@ -27,6 +30,11 @@ class board:
         self.frameCounter = 0
         self.FPS = FPS
         self.lastFacing = "up"
+        self.maxAmmo = maxAmmo
+        self.currentAmmo = []
+        self.droppedAmmo = []
+        self.tail = []
+
 
     def printBoard(self):
         self.updateBoard()
@@ -39,12 +47,19 @@ class board:
             line += "|"
             print(line)
         print("  " + "––" * self.size)
+        print("*:" + "█" * len(self.currentAmmo) + "░" * (self.maxAmmo - len(self.currentAmmo)))
 
     def updateBoard(self):
         self.frameCounter += 1
         board = ["."]*self.size
         for i in range(self.size):
             board[i] = [self.EMPTYFIELD]*self.size
+
+        for a in self.droppedAmmo:
+            board[a.position.x][a.position.y] = self.AMMO
+
+        for a in self.tail:
+            board[a.position.x][a.position.y] = self.AMMO
 
         for x in range(len(board)):
             for y in range(len(board[x])):
@@ -56,10 +71,19 @@ class board:
 
         board[self.characterPos.x][self.characterPos.y] = self.getCharacterSymbol()
         self.field = board
-        if self.frameCounter % math.ceil(self.FPS / 10) == 0:
+
+        for a in self.droppedAmmo:
+            if a.position == self.characterPos and self.maxAmmo > len(self.currentAmmo):
+                self.droppedAmmo.remove(a)
+                self.currentAmmo.append(a)
+
+        if self.frameCounter % 3 == 0:
             self.moveShots()
-            if self.frameCounter % math.ceil(self.FPS / 20) == 0:
-                self.moveForward()
+        if self.frameCounter % 6 == 0:
+            self.moveForward()
+        if self.frameCounter % 60 == 0:
+            if len(self.currentAmmo) < self.maxAmmo:
+                self.placeAmmo()
 
     def addWall(self, pos : vector3):
         self.walls[pos.x][pos.y] = self.WALL
@@ -81,8 +105,11 @@ class board:
         self.facing = newFacing
 
     def executeShot(self):
-        position = self.characterPos + self.forwardVector(self.facing)
 
+        if len(self.currentAmmo) <= 0:
+            return
+
+        position = self.characterPos + self.forwardVector(self.facing)
 
         if (position.x < 0 or position.y < 0 or
             position.x >= self.size or position.y >= self.size):
@@ -95,8 +122,12 @@ class board:
             if s.position == position:
                 return
         
-        newShot = shot("bullet", self.facing, 1, position)
-        self.shots.append(newShot)
+        s = self.currentAmmo[len(self.currentAmmo)-1]
+        self.currentAmmo.remove(s)
+        self.tail.remove(s)
+        s.position = position
+        s.direction = self.facing
+        self.shots.append(s)
         return
     
     def moveShots(self):
@@ -129,8 +160,22 @@ class board:
             s.direction = newFacing
 
     def moveForward(self):
+        currentTail = self.tail
+        if (len(currentTail) < len(self.currentAmmo)):
+            newLink = self.currentAmmo[len(self.currentAmmo) - 1]
+            if len(currentTail) == 0:
+                newLink.position = self.characterPos
+            else:
+                newLink.position = currentTail[len(currentTail) - 1].position
+            currentTail.append(newLink)
+            
+        for s in reversed(currentTail):
+            if currentTail.index(s) != 0:
+                s.position = currentTail[currentTail.index(s) - 1].position
+            else:
+                s.position = self.characterPos
+        
         newPos = self.characterPos.copy()
-
         newPos += self.forwardVector(self.facing)
 
         if (newPos.x < 0 or newPos.y < 0 or
@@ -187,3 +232,14 @@ class board:
             return vector3(0,1,0)
         if facing == "left":
             return vector3(0,-1,0)
+
+    def placeAmmo(self):
+        if len(self.droppedAmmo) >= self.MAXDROPPEDAMMO:
+            return
+        
+        randomPos = vector3(random.randint(0, self.size - 1), random.randint(0, self.size - 1), 0)
+        if self.walls[randomPos.x][randomPos.y] == self.WALL:
+            return
+        
+        ammo = shot("bullet", "up", 1, randomPos)
+        self.droppedAmmo.append(ammo)
