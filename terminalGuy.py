@@ -3,10 +3,14 @@ import sys
 import string
 from vector3 import vector3
 from board import board
+import time
+import sys
+#import keyboard
 
+MAXFPS = 30
 CHARACTERSYMBOL = "o "
-EMPTYFIELD = "x "
-WALL = "+ "
+EMPTYFIELD = "  "
+WALL = "x "
 
 sizeInt = 10
 characterPos = vector3(0, 0, 0)
@@ -18,11 +22,15 @@ game = board(
     WALL=WALL)
 game.addWall(vector3(5,5,0))
 
+def onspace(event):
+    game.executeCmd("up")
 
 while True:
     game.printBoard()
-    cmd = input("cmd: ")
-    if (cmd == "#quit"):
-        break
-    game.executeCmd(cmd)
+    time.sleep(1 / MAXFPS)
+    #keyboard.on_press_key("space", onspace)
+    #cmd = ""
+
+    #if cmd != "":
+    #    game.executeCmd(cmd)
     

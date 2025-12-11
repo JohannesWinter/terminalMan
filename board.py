@@ -18,11 +18,15 @@ class board:
 
     def printBoard(self):
         self.updateBoard()
+        print("\n"*100)
+        print("  " + "––" * self.size)
         for i in range(len(self.field)):
-            line = ""
+            line = "| "
             for x in range(len(self.field[len(self.field) - i - 1])):
                 line += (self.field[len(self.field) - i - 1][x])
+            line += "|"
             print(line)
+        print("  " + "––" * self.size)
 
     def updateBoard(self):
         board = ["."]*self.size
