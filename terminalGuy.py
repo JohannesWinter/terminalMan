@@ -9,10 +9,10 @@ from pynput import keyboard
 import threading
 
 MAXFPS = 30
-CS_UP = "o "
-CS_DOWN = "o "
-CS_RIGHT = "o "
-CS_LEFT = "o "
+CS_UP = "ʌ "
+CS_DOWN = "v "
+CS_RIGHT = "> "
+CS_LEFT = "< "
 EMPTYFIELD = "  "
 WALL = "x "
 BULLET = "* "

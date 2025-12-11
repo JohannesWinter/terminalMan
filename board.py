@@ -62,19 +62,15 @@ class board:
 
     def executeMovement(self, command : string): 
         newPos = self.characterPos.copy()
-        newFacing = ""
+        newFacing = self.facing
         if command == "up":
             newPos.add(vector3(1,0,0))
-            newFacing = "up"
         if command == "down":
             newPos.add(vector3(-1,0,0))
-            newFacing = "down"
         if command == "right":
-            newPos.add(vector3(0,1,0))
-            newFacing = "right"
+            newFacing = self.rotateFacing(self.facing, "right")
         if command == "left":
-            newPos.add(vector3(0,-1,0))
-            newFacing = "left"
+            newFacing = self.rotateFacing(self.facing, "left")
 
         if (newPos.x < 0 or newPos.y < 0 or
             newPos.x >= self.size or newPos.y >= self.size):
@@ -129,5 +125,28 @@ class board:
             return self.CS_RIGHT
         if self.facing == "left":
             return self.CS_LEFT
-        return "o "
 
+    def rotateFacing(self, current : str, direction : str):
+        if current == "up":
+            if direction == "left":
+                return "left"
+            if direction == "right":
+                return "right"
+            
+        if current == "down":
+            if direction == "left":
+                return "right"
+            if direction == "right":
+                return "left"
+            
+        if current == "right":
+            if direction == "left":
+                return "up"
+            if direction == "right":
+                return "down"
+            
+        if current == "left":
+            if direction == "left":
+                return "down"
+            if direction == "right":
+                return "up"
