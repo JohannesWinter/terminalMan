@@ -51,7 +51,7 @@ class board:
 
         board[self.characterPos.x][self.characterPos.y] = self.CHARACTERSYMBOL
         self.field = board
-        if self.frameCounter % round(self.FPS) / 2 == 0:
+        if self.frameCounter % round(self.FPS/ 2) == 0:
             self.moveShots()
 
     def addWall(self, pos : vector3):
