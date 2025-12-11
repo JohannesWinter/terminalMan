@@ -5,7 +5,7 @@ from vector3 import vector3
 from board import board
 import time
 import sys
-#import keyboard
+from pynput import keyboard
 
 MAXFPS = 30
 CHARACTERSYMBOL = "o "
@@ -25,12 +25,13 @@ game.addWall(vector3(5,5,0))
 def onspace(event):
     game.executeCmd("up")
 
+listener = keyboard.Listener(on_press=onspace)
+listener.start()
+
 while True:
     game.printBoard()
     time.sleep(1 / MAXFPS)
-    #keyboard.on_press_key("space", onspace)
     #cmd = ""
 
     #if cmd != "":
     #    game.executeCmd(cmd)
-    
