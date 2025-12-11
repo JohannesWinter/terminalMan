@@ -56,14 +56,15 @@ class board:
 
         board[self.characterPos.x][self.characterPos.y] = self.getCharacterSymbol()
         self.field = board
-        if self.frameCounter % math.ceil(self.FPS/ 10) == 0:
+        if self.frameCounter % math.ceil(self.FPS / 10) == 0:
             self.moveShots()
+            if self.frameCounter % math.ceil(self.FPS / 20) == 0:
+                self.moveForward()
 
     def addWall(self, pos : vector3):
         self.walls[pos.x][pos.y] = self.WALL
 
     def executeRotation(self, command : string): 
-        newPos = self.characterPos.copy()
         newFacing = self.facing
         if command == "up":
             newFacing = "up"
@@ -76,19 +77,25 @@ class board:
 
         if self.lastFacing == self.rotateFacing(self.rotateFacing(newFacing, "right"), "right"):
             return
-
-        if (newPos.x < 0 or newPos.y < 0 or
-            newPos.x >= self.size or newPos.y >= self.size):
-            return
         
-        if self.walls[newPos.x][newPos.y] == self.WALL:
-            return
-        
-        self.characterPos = newPos
         self.facing = newFacing
 
     def executeShot(self):
-        newShot = shot("bullet", self.facing, 1, self.characterPos)
+        position = self.characterPos + self.forwardVector(self.facing)
+
+
+        if (position.x < 0 or position.y < 0 or
+            position.x >= self.size or position.y >= self.size):
+            return
+        
+        if self.walls[position.x][position.y] == self.WALL:
+            return
+        
+        for s in self.shots:
+            if s.position == position:
+                return
+        
+        newShot = shot("bullet", self.facing, 1, position)
         self.shots.append(newShot)
         return
     
@@ -116,10 +123,25 @@ class board:
 
             if self.walls[newPos.x][newPos.y] == self.WALL:
                 self.shots.remove(s)
-                return
+                continue
             
             s.position = newPos
             s.direction = newFacing
+
+    def moveForward(self):
+        newPos = self.characterPos.copy()
+
+        newPos += self.forwardVector(self.facing)
+
+        if (newPos.x < 0 or newPos.y < 0 or
+            newPos.x >= self.size or newPos.y >= self.size):
+            return
+        
+        if self.walls[newPos.x][newPos.y] == self.WALL:
+            return
+
+        self.lastFacing = self.facing
+        self.characterPos = newPos
 
     def getCharacterSymbol(self):
         if self.facing == "up":
