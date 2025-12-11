@@ -2,13 +2,17 @@ from vector3 import vector3
 import string
 
 class board:
-    def __init__(self, size : int, startingPos : vector3, EMPTYFIELD : str, CHARACTERSYMBOL : str):
+    def __init__(self, size : int, startingPos : vector3, EMPTYFIELD : str, CHARACTERSYMBOL : str, WALL : str):
         board = ["."]*size
+        walls = ["."]*size
         for i in range(size):
             board[i] = [EMPTYFIELD]*size
+            walls[i] = ["."]*size
+        self.walls = walls
         self.field = board
         self.EMPTYFIELD = EMPTYFIELD
         self.CHARACTERSYMBOL = CHARACTERSYMBOL
+        self.WALL = WALL
         self.characterPos = startingPos
         self.size = size
 
@@ -24,10 +28,17 @@ class board:
         board = ["."]*self.size
         for i in range(self.size):
             board[i] = [self.EMPTYFIELD]*self.size
+
+        for x in range(self.size):
+            for y in range(self[x].size):
+                if self.walls[x][y] == self.WALL:
+                    board[x][y] = self.WALL 
+        
         board[self.characterPos.x][self.characterPos.y] = self.CHARACTERSYMBOL
         self.field = board
 
     def executeCmd(self, command : string): 
+        oldPos = self.characterPos.copy()
         if command == "up":
             self.characterPos.add(vector3(1,0,0))
         if command == "down":
@@ -36,4 +47,8 @@ class board:
             self.characterPos.add(vector3(0,1,0))
         if command == "left":
             self.characterPos.add(vector3(0,-1,0))
-        print(self.characterPos)
+        if (self.walls[self.characterPos.x][self.characterPos.y] == self.WALL):
+            self.characterPos = oldPos
+            return False
+
+        return True

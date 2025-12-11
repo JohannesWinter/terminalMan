@@ -21,6 +21,9 @@ class vector3:
         self.y -= vector.y
         self.z -= vector.z
 
+    def copy(self):
+        return vector3(self.x, self.y, self.z)
+
     def __str__(self):
         return(f"vector3: x = {self.x}, y = {self.y}, z = {self.z}")
     

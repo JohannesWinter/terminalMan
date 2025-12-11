@@ -1,10 +1,11 @@
+
 import sys
 import string
 from vector3 import vector3
 from board import board
 
-CHARACTERSYMBOL = "0"
-EMPTYFIELD = "x"
+CHARACTERSYMBOL = "o "
+EMPTYFIELD = "x "
 
 sizeInt = 10
 characterPos = vector3(0, 0, 0)
