@@ -115,4 +115,5 @@ class board:
                 return
             
             s.position = newPos
+            s.direction = newFacing
 
