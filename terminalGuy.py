@@ -6,6 +6,7 @@ from board import board
 import time
 import sys
 from pynput import keyboard
+import threading
 
 MAXFPS = 30
 CHARACTERSYMBOL = "o "
@@ -22,14 +23,22 @@ game = board(
     WALL=WALL)
 game.addWall(vector3(5,5,0))
 
-def onspace(event):
-    game.executeCmd("up")
+def onKeyboard(key):
+    if (key == keyboard.Key.up):
+        game.executeCmd("up")
+    if (key == keyboard.Key.down):
+        game.executeCmd("down")
+    if (key == keyboard.Key.right):
+        game.executeCmd("right")
+    if (key == keyboard.Key.left):
+        game.executeCmd("left")
 
-listener = keyboard.Listener(on_press=onspace)
+listener = keyboard.Listener(on_press=onKeyboard)
 listener.start()
 
 while True:
     game.printBoard()
+    print(game.characterPos)
     time.sleep(1 / MAXFPS)
     #cmd = ""
 

@@ -1,5 +1,6 @@
 from vector3 import vector3
 import string
+import threading
 
 class board:
     def __init__(self, size : int, startingPos : vector3, EMPTYFIELD : str, CHARACTERSYMBOL : str, WALL : str):
@@ -37,25 +38,32 @@ class board:
             for y in range(len(board[x])):
                 if self.walls[x][y] == self.WALL:
                     board[x][y] = self.WALL 
-        
+
         board[self.characterPos.x][self.characterPos.y] = self.CHARACTERSYMBOL
         self.field = board
 
     def addWall(self, pos : vector3):
         self.walls[pos.x][pos.y] = self.WALL
 
-    def executeCmd(self, command : string): 
-        oldPos = self.characterPos.copy()
+    def executeMovement(self, command : string): 
+        newPos = self.characterPos.copy()
         if command == "up":
-            self.characterPos.add(vector3(1,0,0))
+            newPos.add(vector3(1,0,0))
         if command == "down":
-            self.characterPos.add(vector3(-1,0,0))
+            newPos.add(vector3(-1,0,0))
         if command == "right":
-            self.characterPos.add(vector3(0,1,0))
+            newPos.add(vector3(0,1,0))
         if command == "left":
-            self.characterPos.add(vector3(0,-1,0))
-        if (self.walls[self.characterPos.x][self.characterPos.y] == self.WALL):
-            self.characterPos = oldPos
-            return False
+            newPos.add(vector3(0,-1,0))
 
-        return True
+        if (newPos.x < 0 or newPos.y < 0 or
+            newPos.x >= self.size or newPos.y >= self.size):
+            return
+        
+        if self.walls[newPos.x][newPos.y] == self.WALL:
+            return
+        
+        self.characterPos = newPos
+
+    def executeShot(self):
+        return
