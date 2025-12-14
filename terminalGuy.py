@@ -56,7 +56,3 @@ listener.start()
 while True:
     game.printBoard()
     time.sleep(1 / MAXFPS)
-    #cmd = ""
-
-    #if cmd != "":
-    #    game.executeCmd(cmd)
