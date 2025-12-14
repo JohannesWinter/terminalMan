@@ -38,7 +38,6 @@ game = board(
     WALL=WALL,
     FPS=MAXFPS,
     BULLET=BULLET)
-game.addWall(vector3(5,5,0))
 
 def onKeyboard(key):
     if (key == keyboard.Key.up):

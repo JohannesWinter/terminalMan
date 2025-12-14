@@ -175,6 +175,17 @@ class board:
             s.direction = newFacing
 
     def moveForward(self):
+        newPos = self.characterPos.copy()
+        newPos += self.forwardVector(self.facing)
+
+        if (newPos.x < 0 or newPos.y < 0 or
+            newPos.x >= self.size or newPos.y >= self.size):
+            return
+        
+        if self.walls[newPos.x][newPos.y] == self.WALL:
+            return
+
+        
         currentTail = self.tail
         if (len(currentTail) < len(self.currentAmmo)):
             newLink = self.currentAmmo[len(self.currentAmmo) - 1]
@@ -189,16 +200,6 @@ class board:
                 s.position = currentTail[currentTail.index(s) - 1].position
             else:
                 s.position = self.characterPos
-        
-        newPos = self.characterPos.copy()
-        newPos += self.forwardVector(self.facing)
-
-        if (newPos.x < 0 or newPos.y < 0 or
-            newPos.x >= self.size or newPos.y >= self.size):
-            return
-        
-        if self.walls[newPos.x][newPos.y] == self.WALL:
-            return
 
         self.lastFacing = self.facing
         self.characterPos = newPos
