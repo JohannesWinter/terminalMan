@@ -126,6 +126,10 @@ class board:
 
         position = self.characterPos + self.forwardVector(self.facing)
 
+        s = self.currentAmmo[len(self.currentAmmo)-1]
+        self.currentAmmo.remove(s)
+        self.tail.remove(s)
+
         if (position.x < 0 or position.y < 0 or
             position.x >= self.size or position.y >= self.size):
             return
@@ -137,9 +141,6 @@ class board:
             if s.position == position:
                 return
         
-        s = self.currentAmmo[len(self.currentAmmo)-1]
-        self.currentAmmo.remove(s)
-        self.tail.remove(s)
         s.position = position
         s.direction = self.facing
         self.shots.append(s)
