@@ -6,7 +6,21 @@ import math
 import random
 
 class board:
-    def __init__(self, size : int, startingPos : vector3, maxAmmo : int, MAXDROPPEDAMMO, EMPTYFIELD : str, CS_UP : str, CS_DOWN : str , CS_RIGHT : str, CS_LEFT : str,WALL : str, BULLET : str, AMMO : str, FPS : int):
+    def __init__(self, 
+                 size : int, 
+                 startingPos : vector3, 
+                 maxAmmo : int, 
+                 MAXDROPPEDAMMO : int, 
+                 EMPTYFIELD : str, 
+                 CS_UP : str, 
+                 CS_DOWN : str, 
+                 CS_RIGHT : str, 
+                 CS_LEFT : str, 
+                 WALL : str, 
+                 BULLET : str, 
+                 AMMO : str, 
+                 AMMOTAIL : str,
+                 FPS : int):
         board = ["."]*size
         walls = ["."]*size
         for i in range(size):
@@ -22,6 +36,7 @@ class board:
         self.WALL = WALL
         self.BULLET = BULLET
         self.AMMO = AMMO
+        self.AMMOTAIL = AMMOTAIL
         self.MAXDROPPEDAMMO = MAXDROPPEDAMMO
         self.characterPos = startingPos
         self.size = size
@@ -59,7 +74,7 @@ class board:
             board[a.position.x][a.position.y] = self.AMMO
 
         for a in self.tail:
-            board[a.position.x][a.position.y] = self.AMMO
+            board[a.position.x][a.position.y] = self.AMMOTAIL
 
         for x in range(len(board)):
             for y in range(len(board[x])):

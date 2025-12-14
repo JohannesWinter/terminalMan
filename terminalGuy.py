@@ -16,7 +16,8 @@ CS_LEFT = "< "
 EMPTYFIELD = "  "
 WALL = "x "
 BULLET = "* "
-AMMO = "o "
+AMMO = ". "
+AMMOTAIL = "o "
 MAXAMMO = 5
 MAXDROPPEDAMMO = 2
 
@@ -28,6 +29,7 @@ game = board(
     maxAmmo=MAXAMMO,
     MAXDROPPEDAMMO=MAXDROPPEDAMMO,
     AMMO=AMMO,
+    AMMOTAIL=AMMOTAIL,
     EMPTYFIELD=EMPTYFIELD, 
     CS_UP=CS_UP,
     CS_DOWN=CS_DOWN,
