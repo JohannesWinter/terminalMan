@@ -17,7 +17,9 @@ class board:
                  CS_RIGHT : str, 
                  CS_LEFT : str, 
                  WALL : str, 
-                 BULLET : str, 
+                 BULLETUPWARDS : str,
+                 BULLETSIDEWARDS : str, 
+                 ASTROID : str,
                  AMMO : str, 
                  AMMOTAIL : str,
                  FPS : int):
@@ -34,13 +36,16 @@ class board:
         self.CS_RIGHT = CS_RIGHT
         self.CS_LEFT = CS_LEFT
         self.WALL = WALL
-        self.BULLET = BULLET
+        self.BULLETUPWARDS = BULLETUPWARDS
+        self.BULLETSIDEWARDS = BULLETSIDEWARDS
+        self.ASTROID = ASTROID
         self.AMMO = AMMO
         self.AMMOTAIL = AMMOTAIL
         self.MAXDROPPEDAMMO = MAXDROPPEDAMMO
         self.characterPos = startingPos
         self.size = size
         self.shots = []
+        self.astroids = []
         self.facing = "up"
         self.frameCounter = 0
         self.FPS = FPS
@@ -49,6 +54,7 @@ class board:
         self.currentAmmo = []
         self.droppedAmmo = []
         self.tail = []
+        self.points = 0
 
 
     def printBoard(self):
@@ -82,7 +88,14 @@ class board:
                     board[x][y] = self.WALL
 
         for s in self.shots:
-            board[s.position.x][s.position.y] = self.BULLET
+            if s.shotType == "bullet":
+                if s.direction == "up" or s.direction == "down":
+                    board[s.position.x][s.position.y] = self.BULLETUPWARDS
+                else:
+                    board[s.position.x][s.position.y] = self.BULLETSIDEWARDS
+        
+        for s in self.astroids:
+            board[s.position.x][s.position.y] = self.ASTROID
 
         board[self.characterPos.x][self.characterPos.y] = self.getCharacterSymbol()
         self.field = board
@@ -99,6 +112,7 @@ class board:
         if self.frameCounter % 60 == 0:
             if len(self.currentAmmo) < self.maxAmmo:
                 self.placeAmmo()
+                self.spawnAstroid()
 
     def addWall(self, pos : vector3):
         self.walls[pos.x][pos.y] = self.WALL
@@ -142,7 +156,7 @@ class board:
             return
         
         for s in self.shots:
-            if s.position == position:
+            if s.position == position and s.shotType == "bullet":
                 return
         
         s.position = position
@@ -150,8 +164,10 @@ class board:
         self.shots.append(s)
 
     def moveShots(self):
-        for s in self.shots:
+        for s in self.shots + self.astroids:
             newPos = s.position.copy()
+            s.moveCounter += 1
+
             newFacing = ""
             if s.direction == "up":
                 newPos = newPos + vector3(1,0,0)
@@ -166,14 +182,33 @@ class board:
                 newPos = newPos + vector3(0,-1,0)
                 newFacing = "left"
             
-            if (newPos.x < 0 or newPos.y < 0 or
-                newPos.x >= self.size or newPos.y >= self.size):
-                self.shots.remove(s)
-                continue
+            if s.shotType == "bullet":
+                if s.moveCounter >= 1:
+                    s.moveCounter = 0
+                else:
+                    continue
 
-            if self.walls[newPos.x][newPos.y] == self.WALL:
-                self.shots.remove(s)
-                continue
+                if (newPos.x < 0 or newPos.y < 0 or
+                    newPos.x >= self.size or newPos.y >= self.size):
+                    self.shots.remove(s)
+                    continue
+
+                if self.walls[newPos.x][newPos.y] == self.WALL:
+                    self.shots.remove(s)
+                    continue
+            if s.shotType == "astroid":
+                if s.moveCounter >= 2:
+                    s.moveCounter = 0
+                else:
+                    continue
+                if (newPos.x < 0 or newPos.y < 0 or
+                    newPos.x >= self.size or newPos.y >= self.size):
+                    self.astroids.remove(s)
+                    continue
+
+                if self.walls[newPos.x][newPos.y] == self.WALL:
+                    self.astroids.remove(s)
+                    continue
             
             s.position = newPos
             s.direction = newFacing
@@ -263,3 +298,24 @@ class board:
         
         ammo = shot("bullet", "up", 1, randomPos)
         self.droppedAmmo.append(ammo)
+
+    def spawnAstroid(self):
+        randPos = vector3(random.randint(0, self.size - 1), random.randint(0, self.size - 1), 0)
+        randDir = ""
+        direction = ""
+        if random.randint(0, 1) == 0:
+            randPos = vector3(randPos.x, random.choice([0, len(self.field) - 1]), randPos.z)
+            if randPos.y == 0:
+                direction = "right"
+            else:
+                direction = "left"
+        else:
+            randPos = vector3(random.choice([0, len(self.field[randPos.y]) - 1]), randPos.y, randPos.z)
+            if randPos.x == 0:
+                direction = "up"
+            else:
+                direction = "down"
+
+        newShot = shot("astroid", direction, 1, randPos)
+        self.astroids.append(newShot)
+        

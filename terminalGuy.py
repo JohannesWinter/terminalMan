@@ -15,7 +15,9 @@ CS_RIGHT = "> "
 CS_LEFT = "< "
 EMPTYFIELD = "  "
 WALL = "x "
-BULLET = "* "
+BULLETUPWARDS = "| "
+BULLETSIDEWARDS = "– "
+ASTROID = "* "
 AMMO = ". "
 AMMOTAIL = "o "
 MAXAMMO = 5
@@ -37,7 +39,9 @@ game = board(
     CS_LEFT=CS_LEFT, 
     WALL=WALL,
     FPS=MAXFPS,
-    BULLET=BULLET)
+    BULLETUPWARDS=BULLETUPWARDS,
+    BULLETSIDEWARDS=BULLETSIDEWARDS,
+    ASTROID=ASTROID)
 
 def onKeyboard(key):
     if (key == keyboard.Key.up):
