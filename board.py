@@ -72,6 +72,12 @@ class board:
 
     def updateBoard(self):
         self.frameCounter += 1
+
+        for s in self.shots:
+            for a in self.astroids:
+                if s != a and s.position == a.position:
+                    self.astroids.remove(a)
+                    self.shots.remove(s)
         board = ["."]*self.size
         for i in range(self.size):
             board[i] = [self.EMPTYFIELD]*self.size
@@ -197,7 +203,7 @@ class board:
                     self.shots.remove(s)
                     continue
             if s.shotType == "astroid":
-                if s.moveCounter >= 2:
+                if s.moveCounter >= 10:
                     s.moveCounter = 0
                 else:
                     continue
