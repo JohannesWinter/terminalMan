@@ -16,6 +16,7 @@ class board:
                  CS_DOWN : str, 
                  CS_RIGHT : str, 
                  CS_LEFT : str, 
+                 CS_GAMEOVER: str,
                  WALL : str, 
                  BULLETUPWARDS : str,
                  BULLETSIDEWARDS : str, 
@@ -55,29 +56,53 @@ class board:
         self.droppedAmmo = []
         self.tail = []
         self.points = 0
+        self.isGameOver = False
+        self.points = 0
+        self.timeCount = 0
+        self.CS_GAMEOVER = CS_GAMEOVER
 
 
     def printBoard(self):
-        self.updateBoard()
-        print("\n"*100)
-        print("  " + "––" * self.size)
-        for i in range(len(self.field)):
-            line = "| "
-            for x in range(len(self.field[len(self.field) - i - 1])):
-                line += (self.field[len(self.field) - i - 1][x])
-            line += "|"
-            print(line)
-        print("  " + "––" * self.size)
-        print("*:" + "█" * len(self.currentAmmo) + "░" * (self.maxAmmo - len(self.currentAmmo)))
+        if self.isGameOver == False:
+            self.updateBoard()
+            print("\n"*100)
+            print("  " + "––" * self.size)
+            for i in range(len(self.field)):
+                line = "| "
+                for x in range(len(self.field[len(self.field) - i - 1])):
+                    line += (self.field[len(self.field) - i - 1][x])
+                line += "|"
+                print(line)
+            print("  " + "––" * self.size)
+            print(("*:" + "█" * len(self.currentAmmo) + "░" * (self.maxAmmo - len(self.currentAmmo)) + f" Score: {self.points}"))
+
+        else:
+            print("\n"*100)
+            print("\tGame Over!")
+            print(f"\tScore: {self.points}")
+            print(f"\tTime: {self.timeCount}s")
+            print("  " + "––" * self.size)
+            for i in range(len(self.field)):
+                line = "| "
+                for x in range(len(self.field[len(self.field) - i - 1])):
+                    line += (self.field[len(self.field) - i - 1][x])
+                line += "|"
+                print(line)
+            print("  " + "––" * self.size)
+            print("")
+            
 
     def updateBoard(self):
         self.frameCounter += 1
-
-        for s in self.shots:
-            for a in self.astroids:
+        for a in self.astroids:
+            for s in self.shots:
                 if s != a and s.position == a.position:
                     self.astroids.remove(a)
                     self.shots.remove(s)
+                    self.points += 1000
+            if a.position == self.characterPos:
+                self.gameOver()
+
         board = ["."]*self.size
         for i in range(self.size):
             board[i] = [self.EMPTYFIELD]*self.size
@@ -111,6 +136,9 @@ class board:
                 self.droppedAmmo.remove(a)
                 self.currentAmmo.append(a)
 
+        if self.frameCounter % self.FPS == 0:
+            self.timeCount += 1
+            self.points += 100
         if self.frameCounter % 3 == 0:
             self.moveShots()
         if self.frameCounter % 6 == 0:
@@ -119,7 +147,6 @@ class board:
             if len(self.currentAmmo) < self.maxAmmo:
                 self.placeAmmo()
                 self.spawnAstroid()
-
     def addWall(self, pos : vector3):
         self.walls[pos.x][pos.y] = self.WALL
 
@@ -250,6 +277,8 @@ class board:
         self.characterPos = newPos
 
     def getCharacterSymbol(self):
+        if self.isGameOver:
+            return self.CS_GAMEOVER
         if self.facing == "up":
             return self.CS_UP
         if self.facing == "down":
@@ -324,4 +353,7 @@ class board:
 
         newShot = shot("astroid", direction, 1, randPos)
         self.astroids.append(newShot)
+
+    def gameOver(self):
+        self.isGameOver = True
         
