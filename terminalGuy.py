@@ -24,7 +24,7 @@ AMMOTAIL = "o "
 MAXAMMO = 5
 MAXDROPPEDAMMO = 2
 
-sizeInt = 10
+sizeInt = 20
 characterPos = vector3(0, 0, 0)
 game = board(
     size=sizeInt, 

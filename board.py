@@ -146,7 +146,8 @@ class board:
         if self.frameCounter % 60 == 0:
             if len(self.currentAmmo) < self.maxAmmo:
                 self.placeAmmo()
-                self.spawnAstroid()
+        if self.frameCounter % (round(120*self.FPS/self.frameCounter) + 2 * self.FPS) == 0:
+            self.spawnAstroid()
     def addWall(self, pos : vector3):
         self.walls[pos.x][pos.y] = self.WALL
 
